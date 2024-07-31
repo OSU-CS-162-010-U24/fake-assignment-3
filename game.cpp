@@ -78,7 +78,19 @@ void game::play_user_turn() {
 			"Type anything to draw a card: " << std::endl;
 		std::string dummy;
 		std::cin >> dummy;
-		this->user.append_card(this->d.draw_card());
+
+		card drawn_card = this->d.draw_card();
+		
+		// Check if drawn card is playable
+		if (drawn_card.is_playable(this->top_of_discard_pile)) {
+			// If so, play it and notify user.
+			this->top_of_discard_pile = drawn_card;
+			std::cout << "You drew a playable card and played it!"
+				<< std::endl << std::endl;
+		} else {
+			// Otherwise, silently add it to the user's hand
+			this->user.append_card(this->d.draw_card());
+		}
 	}
 }
 
@@ -104,7 +116,16 @@ void game::play_npc_turn() {
 		
 	} else {
 		// Otherwise, draw a card from the top of the deck
-		this->npc.append_card(this->d.draw_card());
+		card drawn_card = this->d.draw_card();
+		
+		// Check if drawn card is playable
+		if (drawn_card.is_playable(this->top_of_discard_pile)) {
+			// If so, play it
+			this->top_of_discard_pile = drawn_card;
+		} else {
+			// Otherwise, silently add it to the NPC's hand
+			this->npc.append_card(this->d.draw_card());
+		}
 	}
 }
 
